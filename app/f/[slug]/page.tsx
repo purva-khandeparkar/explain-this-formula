@@ -5,7 +5,6 @@ type PageProps = {
 };
 
 export default async function FormulaPage({ params }: PageProps) {
-  // ✅ unwrap params FIRST
   const { slug } = await params;
 
   const { data, error } = await supabase
