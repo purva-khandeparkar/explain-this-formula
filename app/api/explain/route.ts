@@ -53,25 +53,36 @@ export async function POST(req: Request) {
       ],
     });
 
-    const rawText = response?.text?.trim() || "";
+    const raw: unknown = response?.text;
 
-    let parsed;
-    try {
-      parsed = JSON.parse(rawText);
-    } catch (err) {
-      console.error("Invalid JSON from Gemini:", rawText);
+    let parsed: unknown;
+
+    if (typeof raw === "string") {
+      try {
+        parsed = JSON.parse(raw.trim());
+      } catch (err) {
+        console.error("Invalid JSON from Gemini:", raw);
+        return Response.json(
+          { error: "AI returned invalid JSON" },
+          { status: 500 }
+        );
+      }
+    } else if (typeof raw === "object" && raw !== null) {
+      parsed = raw;
+    } else {
       return Response.json(
-        { error: "AI returned invalid JSON" },
+        { error: "Empty AI response" },
         { status: 500 }
       );
     }
 
     if (
-      !parsed.explanation ||
-      typeof parsed.explanation !== "object"
+      typeof parsed !== "object" ||
+      parsed === null ||
+      !("explanation" in parsed)
     ) {
       return Response.json(
-        { error: "Malformed explanation object" },
+        { error: "Malformed AI response" },
         { status: 500 }
       );
     }
