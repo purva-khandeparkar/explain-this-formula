@@ -15,6 +15,7 @@ export async function POST(req: Request) {
       );
     }
 
+    /*
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: [
@@ -52,6 +53,18 @@ export async function POST(req: Request) {
         },
       ],
     });
+    */
+
+    const response = {
+      text: {
+        "explanation": {
+          "description": "Evaluates a condition and returns different text values based on the result.",
+          "function": "Checks whether the value in cell C2 is greater than 100 and chooses an output accordingly.",
+          "inputs": "The value in cell C2 and the fixed text values \"High\" and \"Low\".",
+          "result": "Either the text \"High\" if the condition is true or \"Low\" if the condition is false."
+        }
+      }
+    }
 
     const raw: unknown = response?.text;
 
