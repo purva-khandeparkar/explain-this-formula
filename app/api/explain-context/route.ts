@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { supabase } from "@/lib/supabase";
+import sharp from "sharp";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -38,7 +39,13 @@ export async function POST(req: Request) {
       }
 
       const buffer = await imageRes.arrayBuffer();
-      const base64 = Buffer.from(buffer).toString("base64");
+      let pngBuffer;
+      try {
+        pngBuffer = await sharp(buffer).png().toBuffer();
+      } catch {
+        throw new Error("Unsupported image format");
+      }
+      const base64 = Buffer.from(pngBuffer).toString("base64");
       const mimeType =
         imageRes.headers.get("content-type") || "image/svg+xml";
 
@@ -134,7 +141,7 @@ Rules:
       }
     }
 
-    const raw: unknown = dummyResponse.text; //response?.text;
+    const raw: unknown = response?.text; // dummyResponse.text; response?.text;
     let parsed: unknown;
 
     // 🛡️ Defensive parsing (same as your existing API)
