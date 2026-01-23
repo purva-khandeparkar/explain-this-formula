@@ -28,7 +28,6 @@ export async function POST(req: Request) {
 
     let parts: any[] = [];
 
-    // 🟢 IMAGE CONTEXT
     if (srcUrl && mediaType === "image") {
       const imageRes = await fetch(srcUrl);
       if (!imageRes.ok) {
@@ -46,8 +45,7 @@ export async function POST(req: Request) {
         throw new Error("Unsupported image format");
       }
       const base64 = Buffer.from(pngBuffer).toString("base64");
-      const mimeType =
-        imageRes.headers.get("content-type") || "image/svg+xml";
+      const mimeType = "image/png";
 
       parts.push(
         {
@@ -58,60 +56,64 @@ export async function POST(req: Request) {
         },
         {
           text: `
-You are a JSON API.
+            You are a JSON API.
 
-An image of a mathematical formula is provided.
-The image comes from this page:
-${pageUrl || "unknown"}
+            An image of a mathematical formula is provided.
+            This is the other meta data you have about where the image came from:
+              - Page URL: ${pageUrl || "unknown"}
+              - Frame URL: ${frameUrl || "unknown"}
 
-Return ONLY a valid JSON object in the following format:
+            Return ONLY a valid JSON object in the following format:
 
-{
-  "explanation": {
-    "description": "short plain English summary",
-    "function": "what the formula does",
-    "inputs": "what variables or values it depends on",
-    "result": "what the final result represents"
-  }
-}
+            {
+              "explanation": {
+                "description": "short plain English summary",
+                "function": "what the formula does",
+                "inputs": "what variables or values it depends on",
+                "result": "what the final result represents"
+              }
+            }
 
-Rules:
-- Do not include markdown
-- Do not include backticks
-- Do not include any text outside JSON
-- All values must be strings
-          `,
+            Rules:
+            - Do not include markdown
+            - Do not include backticks
+            - Do not include any text outside JSON
+            - All values must be strings
+                      `,
         }
       );
     }
 
-    // 🟢 TEXT CONTEXT
     else if (selectionText) {
       parts.push({
         text: `
-You are a JSON API.
+          You are a JSON API.
 
-Explain the following formula or text:
+          Explain the following formula or text:
 
-${selectionText}
+          ${selectionText}
 
-Return ONLY a valid JSON object in the following format:
+          This is the other meta data you have about where it came from:
+          - Page URL: ${pageUrl || "unknown"}
+          - Frame URL: ${frameUrl || "unknown"}
 
-{
-  "explanation": {
-    "description": "short plain English summary",
-    "function": "what the formula does",
-    "inputs": "what variables or values it depends on",
-    "result": "what the final result represents"
-  }
-}
+          Return ONLY a valid JSON object in the following format:
 
-Rules:
-- Do not include markdown
-- Do not include backticks
-- Do not include any text outside JSON
-- All values must be strings
-        `,
+          {
+            "explanation": {
+              "description": "short plain English summary",
+              "function": "what the formula does",
+              "inputs": "what variables or values it depends on",
+              "result": "what the final result represents"
+            }
+          }
+
+          Rules:
+          - Do not include markdown
+          - Do not include backticks
+          - Do not include any text outside JSON
+          - All values must be strings
+                  `,
       });
     } else {
       return Response.json(
@@ -120,6 +122,7 @@ Rules:
       );
     }
 
+    console.log("Sending parts to Gemini:", parts);
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: [
