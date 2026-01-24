@@ -52,7 +52,7 @@ export default async function FormulaPage({ params }: PageProps) {
         </div>
 
         {/* Formula */}
-        <div className="bg-slate-900/90 border border-slate-700 rounded-xl p-4 font-mono text-emerald-400 text-sm mb-8">
+        <div className="bg-slate-900/90 border border-slate-700 rounded-xl p-4 font-mono text-emerald-400 text-sm mb-8 wrap-break-word">
           {data.formula}
         </div>
 
