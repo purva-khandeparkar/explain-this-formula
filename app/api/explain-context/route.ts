@@ -123,15 +123,15 @@ export async function POST(req: Request) {
     }
 
     console.log("Sending parts to Gemini:", parts);
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: [
-        {
-          role: "user",
-          parts,
-        },
-      ],
-    });
+    // const response = await ai.models.generateContent({
+    //   model: "gemini-3-flash-preview",
+    //   contents: [
+    //     {
+    //       role: "user",
+    //       parts,
+    //     },
+    //   ],
+    // });
 
     const dummyResponse = {
       text: {
@@ -144,7 +144,7 @@ export async function POST(req: Request) {
       }
     }
 
-    const raw: unknown = response?.text; // dummyResponse.text; response?.text;
+    const raw: unknown = dummyResponse.text; // dummyResponse.text; response?.text;
     let parsed: unknown;
 
     if (typeof raw === "string") {

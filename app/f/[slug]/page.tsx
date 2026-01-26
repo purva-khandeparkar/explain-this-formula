@@ -7,7 +7,9 @@ import {
   ListTree,
   Sigma,
   ArrowLeft,
+  ExternalLink,
 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -15,6 +17,8 @@ type PageProps = {
 
 export default async function FormulaPage({ params }: PageProps) {
   const { slug } = await params;
+  const searchParams = useSearchParams();
+  const fromExtension = searchParams.get("from") === "extension";
 
   const { data, error } = await supabase
     .from("formula_explanations")
@@ -41,7 +45,6 @@ export default async function FormulaPage({ params }: PageProps) {
     <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6 antialiased">
       <div className="w-full max-w-2xl bg-slate-800/40 border border-slate-700 rounded-3xl shadow-2xl backdrop-blur-md py-3 px-2 sm:p-8">
 
-        {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <div className="p-2 bg-emerald-500/10 rounded-lg">
             <Sparkles className="w-6 h-6 text-emerald-400" />
@@ -69,7 +72,7 @@ export default async function FormulaPage({ params }: PageProps) {
             </div>
           )}
 
-          {/* Detail cards */}
+          {/* Detail cards Start*/}
           <div className="grid grid-cols-1 gap-4">
             {[
               {
@@ -112,7 +115,6 @@ export default async function FormulaPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* CTA */}
         <Link
           href="/"
           className="mt-10 flex items-center justify-center gap-2 w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors"
@@ -120,6 +122,20 @@ export default async function FormulaPage({ params }: PageProps) {
           <ArrowLeft size={16} />
           Explain another formula
         </Link>
+
+        {fromExtension && (
+          <button
+            onClick={() =>
+              window.open(window.location.pathname, "_blank")
+            }
+            className="flex items-center gap-2 px-3 py-2 text-xs font-medium
+               text-slate-200 bg-slate-800 hover:bg-slate-700
+               rounded-lg transition"
+          >
+            <ExternalLink size={14} />
+            Open in new tab
+          </button>
+        )}
       </div>
     </div>
   );
