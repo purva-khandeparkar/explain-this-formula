@@ -9,16 +9,15 @@ import {
   ArrowLeft,
   ExternalLink,
 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: { from?: string };
 };
 
-export default async function FormulaPage({ params }: PageProps) {
+export default async function FormulaPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
-  const searchParams = useSearchParams();
-  const fromExtension = searchParams.get("from") === "extension";
+  const fromExtension = searchParams?.from === "extension";
 
   const { data, error } = await supabase
     .from("formula_explanations")
