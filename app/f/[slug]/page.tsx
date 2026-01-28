@@ -123,17 +123,15 @@ export default async function FormulaPage({ params, searchParams }: PageProps) {
         </Link>
 
         {fromExtension && (
-          <button
-            onClick={() =>
-              window.open(window.location.pathname, "_blank")
-            }
-            className="flex items-center gap-2 px-3 py-2 text-xs font-medium
-               text-slate-200 bg-slate-800 hover:bg-slate-700
-               rounded-lg transition"
+          <Link
+            href={`/f/${slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-10 flex items-center justify-center gap-2 w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors"
           >
             <ExternalLink size={14} />
             Open in new tab
-          </button>
+          </Link>
         )}
       </div>
     </div>
